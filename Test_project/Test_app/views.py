@@ -5,6 +5,7 @@ from django.views import generic
 from .forms import VocabForm
 from .models import Vocab
 import random
+import requests
 from django.http import JsonResponse
 
 
@@ -114,3 +115,37 @@ def check_answer(request):
             return JsonResponse({'correct': False, 'selected_word': selected_word})
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+def dictionary(request):
+    """View function for dictionary page."""
+    dictionary_query = request.GET.get('search_dictionary', '')
+    
+    url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{dictionary_query}"
+    
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()[0]
+        word = data['word']
+        phonetics = data.get('phonetics', [])
+        meanings = data.get('meanings', [])
+        definitions = []
+        for meaning in meanings:
+            part_of_speech = meaning.get('partOfSpeech', '')
+            definition_list = meaning.get('definitions', [])
+            for definition in definition_list:
+                definitions.append({
+                    'partOfSpeech': part_of_speech,
+                    'definition': definition.get('definition', ''),
+                    'example': definition.get('example', ''),
+                })
+    else:
+        return redirect('index')
+        
+    context = {
+        'word': word,
+        'phonetics': phonetics,
+        'definitions': definitions,
+    }
+    
+    return render(request, 'dictionary.html', context)
