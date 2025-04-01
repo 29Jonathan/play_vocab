@@ -1,0 +1,20 @@
+{% extends "index.html" %}
+
+{% block title %}
+  <title>{{ vocab.word }}</title>
+{% endblock %}
+
+{% block headline %}
+  <h1 class="mb-4">{{ vocab.word }}</h1>
+{% endblock %}
+
+{% block content %}
+  <div class="container mt-4">
+    <h5 style="padding: 15px"><strong>Meaning:</strong> {{ vocab.meaning }}</h5>
+    <h5 style="padding: 15px"><strong>Example:</strong> {{ vocab.example }}</h5>
+    <p><strong>Status:</strong> {{ vocab.get_full_status_name }}</p>
+    <p><strong>Part of speech:</strong> {{ vocab.get_full_category_name }}</p>
+    <p><strong>Created:</strong> {{ vocab.created_at }}</p>
+    <a href="{% url 'index' %}" class="btn btn-primary">Back to list</a>
+  </div>
+{% endblock %}
