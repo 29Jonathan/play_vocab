@@ -9,6 +9,10 @@ import requests
 from django.http import JsonResponse
 from .forms import CustomUserCreationForm
 from django.contrib.auth import login
+import csv
+from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from reportlab.pdfgen import canvas
 
 
 def index(request):
@@ -179,7 +183,46 @@ def signup(request):
     return render(request, 'registration/signup.html', {'form': form})
 
 
+@login_required
+def export_vocab_csv(request):
+    """Export vocab list as a CSV file."""
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="vocab_list.csv"'
 
+    writer = csv.writer(response)
+    writer.writerow(['Word', 'Category', 'Status', 'Meaning', 'Example', 'Created At'])
 
+    # Fetch vocab list for the logged-in user
+    vocab_list = Vocab.objects.filter(user=request.user)
+    for vocab in vocab_list:
+        writer.writerow([
+            vocab.word,
+            vocab.get_full_category_name(),
+            vocab.get_full_status_name(),
+            vocab.meaning,
+            vocab.example,
+            vocab.created_at,
+        ])
 
+    return response
+
+@login_required
+def export_vocab_pdf(request):
+    """Export vocab list as a PDF file."""
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="vocab_list.pdf"'
+
+    p = canvas.Canvas(response)
+    p.drawString(100, 800, f"Vocab List for {request.user.username}")
+
+    # Fetch vocab list for the logged-in user
+    vocab_list = Vocab.objects.filter(user=request.user)
+    y = 750
+    for vocab in vocab_list:
+        p.drawString(100, y, f"{vocab.word} - ({vocab.get_full_status_name()})")
+        y -= 20
+
+    p.showPage()
+    p.save()
+    return response
 

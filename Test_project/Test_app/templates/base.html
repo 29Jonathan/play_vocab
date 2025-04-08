@@ -23,11 +23,19 @@
                 <h2><a href="{% url 'index' %}" class="Logo">Vocab Notebook</a></h2>
                 <div id="menu-time" class="menu-data animate__animated ">
                     <a onclick="closebar()"><i id="close" class="size fa-solid fa-xmark nav-a"></i></a>
-                    <a href="{% url 'index' %}" class="nav-a">Home</a>
+                    <a href="{% url 'index' %}" class="nav-a"><i class="fa fa-home" aria-hidden="true"></i>Home</a>
                     <a href="{% url 'word_scramble' %}" class="nav-a">
                         <i class="fas fa-dice-d6"></i> Word Scramble
                     </a>
-                    <a href="" class="nav-a">Dropdown</a>
+                    <div class="dropdown">
+                        <a href="#" class="nav-a dropdown-toggle">
+                            <i class="bi bi-save"></i> Save
+                        </a>
+                        <div class="dropdown-content">
+                            <a class="dropdown-item" href="{% url 'export_vocab_pdf' %}">PDF</a>
+                            <a class="dropdown-item" href="{% url 'export_vocab_csv' %}">Excel</a>
+                        </div>
+                    </div>
                     {% if user.is_authenticated %}
                     <a href="{% url 'logout' %}?next={{ request.path }}" class="nav-a">Logout</a>
                     <i class='far fa-id-card'></i>{{ user.get_username }}

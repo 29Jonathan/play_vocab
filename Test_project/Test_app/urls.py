@@ -23,3 +23,8 @@ urlpatterns += [
     # Sign-up
     path('signup/', views.signup, name='signup'),
 ]
+
+urlpatterns += [
+    path('export/csv/', views.export_vocab_csv, name='export_vocab_csv'),
+    path('export/pdf/', views.export_vocab_pdf, name='export_vocab_pdf'),
+]

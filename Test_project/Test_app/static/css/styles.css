@@ -170,3 +170,38 @@ mark {
   }
 
 }
+/*                  dropdown */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  min-width: 120px;
+  background-color: black;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  border-radius: 10px;
+}
+
+.dropdown-content a {
+  color: white;
+  padding: 10px 15px;
+  text-decoration: none;
+  display: block;
+  font-weight: bold;
+  border-radius: 25px;
+  transition: background-color 0.3s ease-in;
+  text-align: center;
+}
+
+.dropdown-content a:hover {
+  background-color: white;
+  color: rgb(0, 12, 34);
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
