@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse # Used in get_absolute_url() to get URL for specified ID
+from django.contrib.auth.models import User
 
 class Vocab(models.Model):
     """Model representing a book (but not a specific copy of a book)."""
@@ -41,6 +42,7 @@ class Vocab(models.Model):
 
     created_at = models.DateField(auto_now_add=True, help_text='The date the vocab was created.', null=True, blank=True)
 
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='vocab_list')
     
     def __str__(self):
         """String for representing the Model object."""

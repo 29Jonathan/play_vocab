@@ -4,6 +4,7 @@ mark {
   font-weight: bold;
 }
 
+/* *********************dictionary search bar */
 .search-wrapper {
   width: 680px;
   margin: 80px auto;
@@ -75,4 +76,97 @@ mark {
 
 .search-box.dark .search-icon {
   color: #6c757d;
+}
+
+/* ********************************* navigation bar */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.navbar {
+  display: flex;
+  background-color: black;
+  padding: 15px 20px;
+  color: white;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.data-container {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Logo {
+  font-family: Georgia, serif;
+  text-shadow: 2px 2px 5px gainsboro;
+  text-decoration: none;
+  color: white;
+}
+
+.nav-a {
+  text-decoration: none;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 25px;
+  transition: background-color 0.3s ease-in;
+  margin: 0 10px;
+  font-weight: bold;
+}
+
+.menu-data {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.nav-a:hover {
+  background-color: white;
+  color: rgb(0, 12, 34);
+}
+
+.size-icon {
+  font-size: 26px;
+}
+
+#Menu-bar {
+  display: none;
+  margin-left: auto;
+}
+
+#close {
+  display: none;
+}
+
+@media (max-width:761px) {
+  .menu-data {
+      position: absolute;
+      flex-direction: column;
+      text-align: left;
+      align-items: flex-end;
+      left: 100%;
+      top: 0;
+      transform: translate(-100%);
+      background-color: black;
+      width: 250px;
+      padding: 20px;
+      transition: display ease-in 5s;
+      z-index: -10;
+  }
+
+  #Menu-bar {
+      display: block;
+  }
+
+  #close {
+      display: block;
+  }
+
 }

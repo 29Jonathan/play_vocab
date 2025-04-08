@@ -7,6 +7,8 @@ from .models import Vocab
 import random
 import requests
 from django.http import JsonResponse
+from .forms import CustomUserCreationForm
+from django.contrib.auth import login
 
 
 def index(request):
@@ -15,29 +17,33 @@ def index(request):
     if 'reset' in request.GET:
         request.session['rounds_played'] = -1  # Reset the rounds played
 
-    
     search_query = request.GET.get('search', '')  # Get the search term from the query parameters
     status_filter = request.GET.get('status', '')  # Get the status filter from the query parameters
 
-    # Filter vocab based on search query and status
-    vocab_list = Vocab.objects.all()
+    # Filter vocab based on the logged-in user
+    if request.user.is_authenticated:
+        vocab_list = Vocab.objects.filter(user=request.user)  # Show only vocab entries for the logged-in user
+    else:
+        vocab_list = Vocab.objects.none()  # Return an empty queryset for unauthenticated users
+
+    # Further filter vocab based on search query and status
     if search_query:
         vocab_list = vocab_list.filter(word__icontains=search_query)
     if status_filter:
         vocab_list = vocab_list.filter(status=status_filter)
 
-
-    num_vocabs = Vocab.objects.all().count()
-    num_memerized = Vocab.objects.filter(status__exact='m').count()
-    num_learning = Vocab.objects.filter(status__exact='l').count()
-    num_forgot = Vocab.objects.filter(status__exact='f').count()
+    # Count vocab entries for the logged-in user
+    num_vocabs = vocab_list.count()
+    num_memorized = vocab_list.filter(status__exact='m').count()
+    num_learning = vocab_list.filter(status__exact='l').count()
+    num_forgot = vocab_list.filter(status__exact='f').count()
 
     context = {
         'vocab_list': vocab_list,
         'search_query': search_query,
         'status_filter': status_filter,
         'num_vocabs': num_vocabs,
-        'num_memerized': num_memerized,
+        'num_memorized': num_memorized,
         'num_learning': num_learning,
         'num_forgot': num_forgot,
     }
@@ -63,7 +69,9 @@ def add_vocab(request):
     if request.method == 'POST':
         form = VocabForm(request.POST)
         if form.is_valid():
-            form.save()  # Save the new vocab entry to the database
+            vocab = form.save(commit=False)
+            vocab.user = request.user  # Associate the vocab entry with the logged-in user
+            vocab.save()
             return redirect('index')  # Redirect to the vocab list page (or any other page)
     else:
         form = VocabForm()
@@ -77,7 +85,11 @@ def word_scramble(request):
         request.session['rounds_played'] = 0  # Reset the rounds played
         return redirect('index')  # Redirect to the index page
 
-    
+    # Ensure the user is logged in
+    if not request.user.is_authenticated:
+        request.session['alert_message'] = "Please Login!"
+        return redirect('index')  # Redirect to the index page for unauthenticated users
+
     # Initialize or increment the round counter in the session
     if 'rounds_played' not in request.session:
         request.session['rounds_played'] = 0
@@ -87,14 +99,18 @@ def word_scramble(request):
     else:
         request.session['rounds_played'] += 1
 
-    # Select a random word from the database
-    vocab = random.choice(Vocab.objects.all())
+    # Select a random word from the logged-in user's vocab
+    vocab_list = Vocab.objects.filter(user=request.user)
+    if not vocab_list.exists():
+        return redirect('index')  # Redirect if no vocab entries exist for the user
+
+    vocab = random.choice(vocab_list)
     selected_word = vocab.word
     scrambled_word = ''.join(random.sample(selected_word, len(selected_word)))
 
     # Store the selected word in the session
     request.session['selected_word'] = selected_word
-        
+
     context = {
         'vocab': vocab,
         'scrambled_word': scrambled_word,
@@ -149,3 +165,21 @@ def dictionary(request):
     }
     
     return render(request, 'dictionary.html', context)
+
+
+def signup(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Log the user in after sign-up
+            return redirect('index')  # Redirect to the home page or another page
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'registration/signup.html', {'form': form})
+
+
+
+
+
+

@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
@@ -9,7 +10,16 @@ urlpatterns = [
     path('word_scramble/', views.word_scramble, name='word_scramble'),
     path('check_answer/', views.check_answer, name='check_answer'),
     path('dictionary/', views.dictionary, name='dictionary'),
-    # path('authors/', views.AuthorListView.as_view(), name='authors'),
-    # path('author/<int:pk>', views.AuthorDetailView.as_view(), name='author-detail'),
 ]
 
+
+urlpatterns += [
+    # Login
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    
+    # Logout
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    
+    # Sign-up
+    path('signup/', views.signup, name='signup'),
+]

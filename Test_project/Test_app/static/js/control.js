@@ -5,25 +5,25 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-function checkAnswer() {
-    const userInput = document.getElementById('userInput').value.trim();
-    const correctAnswer = "{{ selected_word }}";
-    const alertBox = document.getElementById('alertBox');
-    const nextRoundButton = document.getElementById('nextRoundButton');
+  function menubar() {
+    var hihu = document.querySelector('.menu-data');
+    var element = document.getElementById('Menu-bar');
 
-    if (userInput === correctAnswer) {
-        alertBox.classList.remove('alert-danger');
-        alertBox.classList.add('alert-success');
-        alertBox.innerText = "Correct! You guessed the word.";
-        nextRoundButton.style.display = "block"; // Show the Next Round button
-    } else {
-        alertBox.classList.remove('alert-success');
-        alertBox.classList.add('alert-danger');
-        alertBox.innerText = `Incorrect! The correct word was: ${correctAnswer}`;
-        nextRoundButton.style.display = "block"; // Show the Next Round button
+    if (hihu) {
+        hihu.classList.remove('animate__fadeOut');
+        element.style.display = 'none';
+        hihu.style.zIndex = '1';
+        hihu.classList.add('animate__fadeIn');
     }
 }
 
-function nextRound() {
-    location.reload(); // Reload the page to start the next round
+function closebar() {
+    var hihu = document.querySelector('.menu-data');
+    var element = document.getElementById('Menu-bar');
+    if (hihu) {
+        hihu.classList.remove('animate__fadeIn');
+        hihu.style.zIndex = '-20';
+        element.style.display = 'block';
+        hihu.classList.add('animate__fadeOut');
+    }
 }
